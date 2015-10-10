@@ -18,21 +18,19 @@ public class MainActivity extends AppCompatActivity {
     CheckBox checkBox3 = null;
     CheckBox checkBox4 = null;
 
-    class MyBUttonListerner implements View.OnClickListener{
+    class MyButtonListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
             ledon = !ledon;
-            if(ledon)
-            {
-                button.setText("ALL ON");
+            if(ledon) {
+                button.setText("LED ON");
                 checkBox1.setChecked(true);
                 checkBox2.setChecked(true);
                 checkBox3.setChecked(true);
                 checkBox4.setChecked(true);
             }
-            else
-            {
-                button.setText("ALL OFF");
+            else {
+                button.setText("LED OFF");
                 checkBox1.setChecked(false);
                 checkBox2.setChecked(false);
                 checkBox3.setChecked(false);
@@ -40,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
     public void onCheckboxClicked(View view) {
         // Is the view now checked?
         boolean checked = ((CheckBox) view).isChecked();
@@ -93,6 +92,27 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        button = (Button)findViewById(R.id.BUTTON);
+        checkBox1 = (CheckBox)findViewById(R.id.LED1);
+        checkBox2 = (CheckBox)findViewById(R.id.LED2);
+        checkBox3 = (CheckBox)findViewById(R.id.LED3);
+        checkBox4 = (CheckBox)findViewById(R.id.LED4);
+
+
+        button.setOnClickListener(new MyButtonListener());
+
+        /*
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                ledon = !ledon;
+                if(ledon)
+                    button.setText("LED ON");
+                else
+                    button.setText("LED OFF");
+            }
+        });
+        */
     }
 
     @Override
@@ -106,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         checkBox3 = (CheckBox) findViewById(R.id.LED3);
         checkBox4 = (CheckBox) findViewById(R.id.LED4);
 
-        button.setOnClickListener(new MyBUttonListerner());
+        button.setOnClickListener(new MyButtonListener());
 
         return true;
     }
