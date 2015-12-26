@@ -17,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
     private final String TAG = "MessageTest";
     private Thread myThread = null;
     private int ButtonCount = 0;
+    private MyThread myThread2 = null;
 
     class MyRunable implements Runnable{
         public void run(){
@@ -32,6 +33,21 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    class MyThread extends Thread{
+        public void run(){
+            int count = 0;
+            for(;;){
+                Log.d(TAG,"MyThread2 "+count++);
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,12 +59,15 @@ public class MainActivity extends AppCompatActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Perform action on click
-                Log.d(TAG,"Send Message " + ButtonCount++);
+                Log.d(TAG, "Send Message " + ButtonCount++);
             }
         });
 
         myThread = new Thread(new MyRunable(),"MeaageThreadTest");
         myThread.start();
+
+        myThread2 = new MyThread();
+        myThread2.start();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
