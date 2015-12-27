@@ -1,6 +1,9 @@
 package com.example.administrator.app_addones_001_message;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +14,7 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.util.Log;
 
+
 public class MainActivity extends AppCompatActivity {
 
     private Button mButton = null;
@@ -18,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
     private Thread myThread = null;
     private int ButtonCount = 0;
     private MyThread myThread2 = null;
+    private Handler mHandler = null;
+    private int mMessageCount = 0;
 
     class MyRunable implements Runnable{
         public void run(){
@@ -34,18 +40,31 @@ public class MainActivity extends AppCompatActivity {
     };
 
     class MyThread extends Thread{
-        public void run(){
-            int count = 0;
-            for(;;){
-                Log.d(TAG,"MyThread2 "+count++);
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+        private Looper mLooper = null;
+        @Override
+        public void run() {
+            super.run();
+            Looper.prepare();
+            synchronized (this){
+                mLooper = Looper.myLooper();
+                notifyAll();
+            }
+            Looper.loop();
+        }
+        public Looper getLooper(){
+            if(!isAlive()){
+                return null;
+            }
+            synchronized (this){
+                while(isAlive()&&mLooper == null){
+                    try{
+                        wait();
+                    }catch (InterruptedException e){
+                    }
                 }
             }
+            return mLooper;
         }
-
     };
 
     @Override
@@ -60,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Perform action on click
                 Log.d(TAG, "Send Message " + ButtonCount++);
+                Message msg = new Message();
+                mHandler.sendMessage(msg);
             }
         });
 
@@ -68,6 +89,14 @@ public class MainActivity extends AppCompatActivity {
 
         myThread2 = new MyThread();
         myThread2.start();
+
+        mHandler = new Handler(myThread2.getLooper(),new Handler.Callback(){
+            @Override
+            public boolean handleMessage(Message msg) {
+                Log.d(TAG,"get Message "+mMessageCount++);
+                return false;
+            }
+        });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
